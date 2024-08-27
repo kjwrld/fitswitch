@@ -1,18 +1,60 @@
-import React, { Suspense, useEffect, useRef, useState } from 'react'
-import { createRoot } from 'react-dom/client';
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Html, OrbitControls } from '@react-three/drei'
-import './styles.css'
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { VRM, VRMLoaderPlugin, VRMHumanBoneName } from '@pixiv/three-vrm'
+import React, { Suspense, useEffect, useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Html, OrbitControls } from "@react-three/drei";
+import "./styles.css";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { VRM, VRMLoaderPlugin, VRMHumanBoneName } from "@pixiv/three-vrm";
 // import type * as VRMSchema from '@pixiv/types-vrm-0.0'
-import { Object3D } from 'three'
-import { useControls } from 'leva'
+import { Object3D, PerspectiveCamera } from "three";
+import { button, useControls } from "leva";
 /*
 
 inspired by https://twitter.com/yeemachine/status/1414993821583118341
 
 */
+
+const CameraControls = () => {
+  const { camera, gl } = useThree();
+  const cameraConfig = useControls("Camera", {
+    positionX: { value: 0, min: -5, max: 5, step: 0.1 },
+    positionY: { value: 1.4, min: -5, max: 5, step: 0.1 },
+    positionZ: { value: -2.1, min: -5, max: 5, step: 0.1 },
+    targetX: { value: 0, min: -5, max: 5, step: 0.1 },
+    targetY: { value: 1.3, min: 0, max: 3, step: 0.1 },
+    targetZ: { value: 0, min: -5, max: 5, step: 0.1 },
+    fov: { value: 75, min: 10, max: 120, step: 1 },
+    near: { value: 0.1, min: 0.1, max: 10, step: 0.1 },
+    far: { value: 1000, min: 100, max: 2000, step: 10 },
+    resetCamera: button(() => {
+      camera.position.set(0, 1.3, 0.6);
+      camera.lookAt(0, 1.3, 0);
+      gl.domElement.dispatchEvent(new Event("resize"));
+    }),
+  });
+
+  const perspectiveCamera = camera as PerspectiveCamera;
+  perspectiveCamera.fov = cameraConfig.fov;
+  perspectiveCamera.near = cameraConfig.near;
+  perspectiveCamera.far = cameraConfig.far;
+  perspectiveCamera.updateProjectionMatrix();
+  perspectiveCamera.position.set(
+    cameraConfig.positionX,
+    cameraConfig.positionY,
+    cameraConfig.positionZ
+  );
+  gl.domElement.dispatchEvent(new Event("resize")); // Ensure canvas resizes with camera adjustments
+
+  return (
+    <OrbitControls
+      target={[
+        cameraConfig.targetX,
+        cameraConfig.targetY,
+        cameraConfig.targetZ,
+      ]}
+    />
+  );
+};
 
 const Avatar = () => {
   const { ...controls } = useControls({
@@ -25,14 +67,17 @@ const Avatar = () => {
     Happy: { value: 0, min: 0, max: 1 },
     Sad: { value: 0, min: 0, max: 1 },
     Surprised: { value: 0, min: 0, max: 1 },
-    Extra: { value: 0, min: 0, max: 1 }
-  })
-  const { scene, camera } = useThree()
+    Extra: { value: 0, min: 0, max: 1 },
+    positionX: { value: 0.0, min: -5, max: 5, step: 0.1 },
+    positionY: { value: 0.5, min: -5, max: 5, step: 0.1 },
+    positionZ: { value: -0.4, min: -5, max: 5, step: 0.1 },
+  });
+  const { scene, camera } = useThree();
   // const gltf = useGLTF('/three-vrm-girl.vrm')
-  const [gltf, setGltf] = useState<GLTF>()
-  const [progress, setProgress] = useState<number>(0)
-  const avatar = useRef<VRM>()
-  const [bonesStore, setBones] = useState<{ [part: string]: Object3D }>({})
+  const [gltf, setGltf] = useState<GLTF>();
+  const [progress, setProgress] = useState<number>(0);
+  const avatar = useRef<VRM>();
+  const [bonesStore, setBones] = useState<{ [part: string]: Object3D }>({});
 
   // const loader = new GLTFLoader()
   // loader.register((parser) => new VRMLoaderPlugin(parser)) // here we are installing VRMLoaderPlugin
@@ -43,24 +88,27 @@ const Avatar = () => {
 
       // VRM.from(gltf as GLTF).then((vrm) => {
 
-      const loader = new GLTFLoader()
+      const loader = new GLTFLoader();
       loader.register((parser) => {
-        return new VRMLoaderPlugin(parser)
-      })
+        return new VRMLoaderPlugin(parser);
+      });
 
       loader.load(
-        '/three-vrm-girl.vrm',
+        "/three-vrm-girl.vrm",
         (gltf) => {
-          setGltf(gltf)
-          const vrm: VRM = gltf.userData.vrm
-          avatar.current = vrm
-          vrm.lookAt.target = camera
+          setGltf(gltf);
+          const vrm: VRM = gltf.userData.vrm;
+          avatar.current = vrm;
+          vrm.lookAt.target = camera;
 
-          vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.Hips).rotation.y = Math.PI
+          vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.Hips).rotation.y =
+            Math.PI;
           // console.log(vrm.blendShapeProxy.exp  ressions)
           // console.log(vrm.expressionManager.expressions)
-          const expressionNames = vrm.expressionManager.expressions.map((expression) => expression.expressionName)
-          console.log(expressionNames)
+          const expressionNames = vrm.expressionManager.expressions.map(
+            (expression) => expression.expressionName
+          );
+          console.log(expressionNames);
           // VRMUtils.rotateVRM0(vrm)
 
           const bones = {
@@ -68,50 +116,68 @@ const Avatar = () => {
             neck: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.Neck),
             hips: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.Hips),
             spine: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.Spine),
-            upperChest: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.UpperChest),
-            leftArm: vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.LeftUpperArm),
-            rightArm: vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.RightUpperArm)
-          }
+            upperChest: vrm.humanoid.getRawBoneNode(
+              VRMHumanBoneName.UpperChest
+            ),
+            leftArm: vrm.humanoid.getNormalizedBoneNode(
+              VRMHumanBoneName.LeftUpperArm
+            ),
+            rightArm: vrm.humanoid.getNormalizedBoneNode(
+              VRMHumanBoneName.RightUpperArm
+            ),
+          };
 
           // bones.rightArm.rotation.z = -Math.PI / 4
 
-          setBones(bones)
+          setBones(bones);
         },
 
         // called as loading progresses
         (xhr) => {
-          setProgress((xhr.loaded / xhr.total) * 100)
-          console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+          setProgress((xhr.loaded / xhr.total) * 100);
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
         },
         // called when loading has errors
         (error) => {
-          console.log('An error happened')
-          console.log(error)
+          console.log("An error happened");
+          console.log(error);
         }
-      )
+      );
     }
-  }, [scene, gltf, camera])
+  }, [scene, gltf, camera]);
 
   useFrame(({ clock }, delta) => {
-    const t = clock.getElapsedTime()
+    const t = clock.getElapsedTime();
 
     if (avatar.current) {
-      avatar.current.update(delta)
-      const blinkDelay = 10
-      const blinkFrequency = 3
-      if (Math.round(t * blinkFrequency) % blinkDelay === 0) {
-        avatar.current.expressionManager.setValue('blink', 1 - Math.abs(Math.sin(t * blinkFrequency * Math.PI)))
+      {
+        avatar.current.scene.position.x = controls.positionX;
+        avatar.current.scene.position.y = controls.positionY;
+        avatar.current.scene.position.z = controls.positionZ;
       }
-      avatar.current.expressionManager.setValue('neutral', controls.Neutral)
-      avatar.current.expressionManager.setValue('angry', controls.Angry)
-      avatar.current.expressionManager.setValue('relaxed', controls.Relaxed)
-      avatar.current.expressionManager.setValue('happy', controls.Happy)
-      avatar.current.expressionManager.setValue('sad', controls.Sad)
-      avatar.current.expressionManager.setValue('Surprised', controls.Surprised)
-      avatar.current.expressionManager.setValue('Extra', controls.Extra)
+      avatar.current.update(delta);
+      const blinkDelay = 10;
+      const blinkFrequency = 3;
+      if (Math.round(t * blinkFrequency) % blinkDelay === 0) {
+        avatar.current.expressionManager.setValue(
+          "blink",
+          1 - Math.abs(Math.sin(t * blinkFrequency * Math.PI))
+        );
+      }
+      avatar.current.expressionManager.setValue("neutral", controls.Neutral);
+      avatar.current.expressionManager.setValue("angry", controls.Angry);
+      avatar.current.expressionManager.setValue("relaxed", controls.Relaxed);
+      avatar.current.expressionManager.setValue("happy", controls.Happy);
+      avatar.current.expressionManager.setValue("sad", controls.Sad);
+      avatar.current.expressionManager.setValue(
+        "Surprised",
+        controls.Surprised
+      );
+      avatar.current.expressionManager.setValue("Extra", controls.Extra);
     }
     if (bonesStore.neck) {
-      bonesStore.neck.rotation.y = (Math.PI / 100) * Math.sin((t / 4) * Math.PI)
+      bonesStore.neck.rotation.y =
+        (Math.PI / 100) * Math.sin((t / 4) * Math.PI);
     }
     // if (bonesStore.spine) {
     //   // bonesStore.spine.position.x = (Math.PI / 300) * Math.sin((t / 4) * Math.PI)
@@ -119,22 +185,25 @@ const Avatar = () => {
     // }
 
     if (bonesStore.upperChest) {
-      bonesStore.upperChest.rotation.y = (Math.PI / 600) * Math.sin((t / 8) * Math.PI)
-      bonesStore.spine.position.y = (Math.PI / 400) * Math.sin((t / 2) * Math.PI)
-      bonesStore.spine.position.z = (Math.PI / 600) * Math.sin((t / 2) * Math.PI)
+      bonesStore.upperChest.rotation.y =
+        (Math.PI / 600) * Math.sin((t / 8) * Math.PI);
+      bonesStore.spine.position.y =
+        (Math.PI / 400) * Math.sin((t / 2) * Math.PI);
+      bonesStore.spine.position.z =
+        (Math.PI / 600) * Math.sin((t / 2) * Math.PI);
     }
     if (bonesStore.head) {
-      bonesStore.head.rotation.y = controls.Head * Math.PI
+      bonesStore.head.rotation.y = controls.Head * Math.PI;
     }
 
     if (bonesStore.leftArm) {
       // bonesStore.leftArm.position.y = leftArm
-      bonesStore.leftArm.rotation.z = controls.leftArm * Math.PI
+      bonesStore.leftArm.rotation.z = controls.leftArm * Math.PI;
     }
     if (bonesStore.rightArm) {
-      bonesStore.rightArm.rotation.z = controls.rightArm * Math.PI
+      bonesStore.rightArm.rotation.z = controls.rightArm * Math.PI;
     }
-  })
+  });
   return (
     <>
       {gltf ? (
@@ -145,18 +214,19 @@ const Avatar = () => {
         <Html center>{progress} % loaded</Html>
       )}
     </>
-  )
-}
+  );
+};
 
-
-const container = document.getElementById('root');
+const container = document.getElementById("root");
 const root = createRoot(container); // createRoot(container!) if you use TypeScript
-root.render( 
-  <Canvas camera={{ position: [0, 1.3, 0.6] }}>
-  <ambientLight intensity={0.65} />
-  <spotLight position={[0, 2, -1]} intensity={0.4} />
-  <Suspense fallback={null}>
-    <Avatar />
-  </Suspense>
-  <OrbitControls target={[0, 1.3, 0]} />
-</Canvas>);
+root.render(
+  <Canvas camera={{ position: [0, 1.3, -1.1] }}>
+    <ambientLight intensity={0.65} />
+    <spotLight position={[0, 2, -1]} intensity={0.4} />
+    <Suspense fallback={null}>
+      <Avatar />
+      <CameraControls />
+    </Suspense>
+    <OrbitControls target={[0, 1.3, 0]} />
+  </Canvas>
+);
