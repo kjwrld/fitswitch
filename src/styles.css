@@ -1,12 +1,57 @@
-* {
-  box-sizing: border-box;
+/* Ensure the root container fills the entire screen and positions its children absolutely */
+#root {
+  position: fixed; /* Use fixed to cover the entire viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Pushes children to the bottom */
+  align-items: center; /* Center aligns children horizontally */
+  margin: 0;
 }
 
-html,
-body,
-#root {
+/* Fullscreen Canvas with zIndex to ensure it stays behind the buttons */
+.canvas-container {
+  position: absolute;
   width: 100%;
   height: 100%;
-  margin: 0;
-  padding: 0;
+  top: 0;
+  left: 0;
+  z-index: 1; /* Keeps the canvas behind the buttons */
+  pointer-events: all;
+}
+
+/* Styling for the button container */
+.button-container {
+  width: 100%; /* Takes full width of the viewport */
+  padding: 20px 0; /* Padding top and bottom for aesthetics */
+  display: flex;
+  justify-content: center; /* Centers buttons horizontally */
+  gap: 10px; /* Spaces out the buttons */
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* Semi-transparent background for better visibility */
+  pointer-events: none; /* Prevents this container from capturing pointer events */
+  z-index: 2;
+}
+
+/* Style for individual buttons */
+.button-container button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  pointer-events: all; /* Allows buttons to capture pointer events */
+}
+
+.button-container button:hover {
+  background-color: #555;
 }
