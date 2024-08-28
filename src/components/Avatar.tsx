@@ -25,6 +25,9 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath }) => {
     Sad: { value: 0, min: 0, max: 1 },
     Surprised: { value: 0, min: 0, max: 1 },
     Extra: { value: 0, min: 0, max: 1 },
+    positionX: { value: 0.0, min: -5, max: 5, step: 0.1 },
+    positionY: { value: 0.5, min: -5, max: 5, step: 0.1 },
+    positionZ: { value: -0.4, min: -5, max: 5, step: 0.1 },
   });
   const { scene } = useThree();
   const [gltf, setGltf] = useState<GLTF>();
@@ -33,77 +36,86 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath }) => {
   const [bonesStore, setBones] = useState<{ [part: string]: Object3D }>({});
 
   useEffect(() => {
-    if (!gltf) {
-      // VRMUtils.removeUnnecessaryJoints(gltf.scene)
+    // VRMUtils.removeUnnecessaryJoints(gltf.scene)
 
-      // VRM.from(gltf as GLTF).then((vrm) => {
+    // VRM.from(gltf as GLTF).then((vrm) => {
 
-      const loader = new GLTFLoader();
-      loader.register((parser) => {
-        return new VRMLoaderPlugin(parser);
-      });
+    const loader = new GLTFLoader();
+    loader.register((parser) => {
+      return new VRMLoaderPlugin(parser);
+    });
 
-      loader.load(
-        vrmPath,
-        (gltf) => {
-          setGltf(gltf);
-          const vrm: VRM = gltf.userData.vrm;
-          if (avatar) {
-            scene.remove(avatar.scene);
-          }
-          setAvatar(vrm);
-          scene.add(vrm.scene);
-          // scene.rotation.y = Math.PI;
-
-          vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.Hips).rotation.y =
-            Math.PI;
-          // console.log(vrm.blendShapeProxy.exp  ressions)
-          // console.log(vrm.expressionManager.expressions)
-          const expressionNames = vrm.expressionManager.expressions.map(
-            (expression) => expression.expressionName
-          );
-          // console.log(expressionNames);
-          // VRMUtils.rotateVRM0(vrm)
-
-          const bones = {
-            head: vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.Head),
-            neck: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.Neck),
-            hips: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.Hips),
-            spine: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.Spine),
-            upperChest: vrm.humanoid.getRawBoneNode(
-              VRMHumanBoneName.UpperChest
-            ),
-            leftArm: vrm.humanoid.getNormalizedBoneNode(
-              VRMHumanBoneName.LeftUpperArm
-            ),
-            rightArm: vrm.humanoid.getNormalizedBoneNode(
-              VRMHumanBoneName.RightUpperArm
-            ),
-          };
-
-          // bones.rightArm.rotation.z = -Math.PI / 4
-
-          setBones(bones);
-        },
-
-        // called as loading progresses
-        (xhr) => {
-          setProgress((xhr.loaded / xhr.total) * 100);
-          console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-        },
-        // called when loading has errors
-        (error) => {
-          console.log("An error happened");
-          console.log(error);
+    loader.load(
+      vrmPath,
+      (gltf) => {
+        setGltf(gltf);
+        const vrm: VRM = gltf.userData.vrm;
+        if (avatar) {
+          scene.remove(avatar.scene);
         }
-      );
-    }
-  }, [scene, gltf]);
+        setAvatar(vrm);
+        scene.add(vrm.scene);
+        // scene.rotation.y = Math.PI;
+
+        vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.Hips).rotation.y =
+          Math.PI;
+        // console.log(vrm.blendShapeProxy.exp  ressions)
+        // console.log(vrm.expressionManager.expressions)
+        const expressionNames = vrm.expressionManager.expressions.map(
+          (expression) => expression.expressionName
+        );
+        // console.log(expressionNames);
+        // VRMUtils.rotateVRM0(vrm)
+
+        const bones = {
+          head: vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.Head),
+          neck: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.Neck),
+          hips: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.Hips),
+          spine: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.Spine),
+          upperChest: vrm.humanoid.getRawBoneNode(VRMHumanBoneName.UpperChest),
+          leftArm: vrm.humanoid.getNormalizedBoneNode(
+            VRMHumanBoneName.LeftUpperArm
+          ),
+          rightArm: vrm.humanoid.getNormalizedBoneNode(
+            VRMHumanBoneName.RightUpperArm
+          ),
+        };
+
+        // bones.rightArm.rotation.z = -Math.PI / 4
+
+        setBones(bones);
+      },
+
+      // called as loading progresses
+      (xhr) => {
+        setProgress((xhr.loaded / xhr.total) * 100);
+        console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+      },
+      // called when loading has errors
+      (error) => {
+        console.log("An error happened");
+        console.log(error);
+      }
+    );
+
+    // Cleanup function to remove avatar from scene when component unmounts or path changes
+    return () => {
+      if (avatar) {
+        scene.remove(avatar.scene);
+        console.log("avatar unmounted");
+      }
+    };
+  }, [vrmPath, scene]);
 
   useFrame(({ clock }, delta) => {
     const t = clock.getElapsedTime();
 
     if (avatar) {
+      {
+        avatar.scene.position.x = controls.positionX;
+        avatar.scene.position.y = controls.positionY;
+        avatar.scene.position.z = controls.positionZ;
+      }
       avatar.update(delta);
       const blinkDelay = 10;
       const blinkFrequency = 3;

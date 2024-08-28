@@ -10,6 +10,7 @@ const App = () => {
 
   const changeOutfit = (newPath: string) => {
     setVrmPath(newPath);
+    console.log("changed path", newPath);
   };
 
   return (
