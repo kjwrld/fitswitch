@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Html, OrbitControls } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 // import "./styles.css";
 import { useLoader } from "@react-three/fiber";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { VRM, VRMLoaderPlugin, VRMHumanBoneName } from "@pixiv/three-vrm";
 // import type * as VRMSchema from '@pixiv/types-vrm-0.0'
-import { Object3D, PerspectiveCamera } from "three";
+import { Object3D } from "three";
 import { button, useControls } from "leva";
 
 interface AvatarProps {
@@ -26,7 +26,7 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath }) => {
     Surprised: { value: 0, min: 0, max: 1 },
     Extra: { value: 0, min: 0, max: 1 },
   });
-  const { scene, camera } = useThree();
+  const { scene } = useThree();
   const [gltf, setGltf] = useState<GLTF>();
   const [progress, setProgress] = useState<number>(0);
   const [avatar, setAvatar] = useState<VRM | null>(null);
@@ -51,9 +51,9 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath }) => {
           if (avatar) {
             scene.remove(avatar.scene);
           }
-          setAvatar(avatar);
-          vrm.lookAt.target = camera;
-          scene.rotation.y = Math.PI;
+          setAvatar(vrm);
+          scene.add(vrm.scene);
+          // scene.rotation.y = Math.PI;
 
           vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.Hips).rotation.y =
             Math.PI;
@@ -98,7 +98,7 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath }) => {
         }
       );
     }
-  }, [scene, gltf, camera]);
+  }, [scene, gltf]);
 
   useFrame(({ clock }, delta) => {
     const t = clock.getElapsedTime();
@@ -152,9 +152,9 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath }) => {
   });
   return (
     <>
-      {gltf ? (
+      {avatar ? (
         <>
-          <primitive object={gltf.scene} />
+          <primitive object={avatar.scene} />
         </>
       ) : (
         <Html center>{progress} % loaded</Html>

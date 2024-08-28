@@ -2,7 +2,7 @@ import React from "react";
 import { useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 // import "./styles.css";
-import THREE, { PerspectiveCamera } from "three";
+import { PerspectiveCamera } from "three";
 import { button, useControls } from "leva";
 
 const CameraControls = () => {
@@ -18,9 +18,8 @@ const CameraControls = () => {
     near: { value: 0.1, min: 0.1, max: 10, step: 0.1 },
     far: { value: 1000, min: 100, max: 2000, step: 10 },
     resetCamera: button(() => {
-      camera.position.set(0, 1.3, 0.6);
-      rotateOnAxis(new THREE.Vector3(0, 1, 0), 90);
-      camera.lookAt(0, 1.3, 0);
+      camera.position.set(0, 1.4, -0.6);
+      camera.rotation.y = -Math.PI;
       gl.domElement.dispatchEvent(new Event("resize"));
     }),
   });
