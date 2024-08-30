@@ -14,7 +14,7 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ vrmPath }) => {
-  const { ...controls } = useControls({
+  const { ...controls } = useControls("Avatar", {
     Head: { value: 0, min: -0.4, max: 0.4 },
     leftArm: { value: 0, min: -0.4, max: 0.4 },
     rightArm: { value: 0, min: -0.4, max: 0.4 },

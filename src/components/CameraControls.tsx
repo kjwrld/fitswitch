@@ -10,7 +10,7 @@ const CameraControls = () => {
   const cameraConfig = useControls("Camera", {
     positionX: { value: 0, min: -10, max: 10, step: 0.1 },
     positionY: { value: 1.4, min: -5, max: 5, step: 0.1 },
-    positionZ: { value: -2.1, min: -5, max: 5, step: 0.1 },
+    positionZ: { value: -2.4, min: -5, max: 5, step: 0.1 },
     targetX: { value: 0, min: -5, max: 5, step: 0.1 },
     targetY: { value: 1.3, min: 0, max: 3, step: 0.1 },
     targetZ: { value: 0, min: -5, max: 5, step: 0.1 },
