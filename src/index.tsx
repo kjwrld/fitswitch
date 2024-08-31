@@ -3,7 +3,10 @@ import ReactDOM from "react-dom";
 import { createRoot } from "react-dom/client";
 import App from "./App"; // Adjust the path as necessary to where your App component is defined
 
-const container = document.getElementById("root");
+const container = document.getElementById("root") as HTMLElement;
+if (!container) {
+  throw new Error("Root container not found");
+}
 const root = createRoot(container);
 root.render(<App />);
 

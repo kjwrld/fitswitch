@@ -6,12 +6,18 @@ import CameraControls from "./components/CameraControls";
 import Platform from "./components/Platform";
 import "./styles.css";
 
-const App = () => {
+const App: React.FC = () => {
   const [vrmPath, setVrmPath] = useState<string>("/vrms/avatar_black.vrm");
+  const [triggerRotation, setTriggerRotation] = useState(false);
 
   const changeOutfit = (newPath: string) => {
     setVrmPath(newPath);
     console.log("changed path", newPath);
+    setTriggerRotation(true); // Trigger the rotation
+  };
+
+  const handleRotationComplete = () => {
+    setTriggerRotation(false); // Reset the trigger after rotation completes
   };
 
   return (
@@ -21,7 +27,10 @@ const App = () => {
           <ambientLight intensity={0.65} />
           <spotLight position={[0, 2, -1]} intensity={0.4} />
           <Suspense>
-            <Platform />
+            <Platform
+              triggerRotation={triggerRotation}
+              onRotationComplete={handleRotationComplete}
+            />
             <Avatar vrmPath={vrmPath} />
             <CameraControls />
           </Suspense>

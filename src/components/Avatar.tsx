@@ -26,7 +26,7 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath }) => {
     Surprised: { value: 0, min: 0, max: 1 },
     Extra: { value: 0, min: 0, max: 1 },
     positionX: { value: 0.0, min: -5, max: 5, step: 0.1 },
-    positionY: { value: 0.5, min: -5, max: 5, step: 0.1 },
+    positionY: { value: 0.6, min: -5, max: 5, step: 0.1 },
     positionZ: { value: -0.4, min: -5, max: 5, step: 0.1 },
   });
   const { scene } = useThree();
