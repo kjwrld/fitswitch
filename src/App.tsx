@@ -11,9 +11,8 @@ const App: React.FC = () => {
   const [triggerRotation, setTriggerRotation] = useState(false);
 
   const changeOutfit = (newPath: string) => {
-    setVrmPath(newPath);
-    console.log("changed path", newPath);
     setTriggerRotation(true); // Trigger the rotation
+    setVrmPath(newPath);
   };
 
   const handleRotationComplete = () => {
@@ -23,7 +22,7 @@ const App: React.FC = () => {
   return (
     <div id="root">
       <div className="canvas-container">
-        <Canvas camera={{ position: [0, 1.3, -1.1] }}>
+        <Canvas camera={{ position: [0, 1.7, -2.2] }}>
           <ambientLight intensity={0.65} />
           <spotLight position={[0, 2, -1]} intensity={0.4} />
           <Suspense>

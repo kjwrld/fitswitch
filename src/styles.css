@@ -21,6 +21,7 @@
   left: 0;
   z-index: 1; /* Keeps the canvas behind the buttons */
   pointer-events: all;
+  background-color: #d7d2e7;
 }
 
 /* Styling for the button container */
