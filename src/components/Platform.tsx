@@ -6,13 +6,13 @@ import { Mesh, MeshStandardMaterial, Color, PointLight, Group } from "three";
 import { gsap } from "gsap";
 
 interface PlatformProps {
-  triggerRotation: boolean;
-  onRotationComplete: () => void;
+  triggerAngelRotation: boolean;
+  onAngelRotationComplete: () => void;
 }
 
 const Platform: React.FC<PlatformProps> = ({
-  triggerRotation,
-  onRotationComplete,
+  triggerAngelRotation,
+  onAngelRotationComplete,
 }) => {
   const gltf = useLoader(GLTFLoader, "/platform.gltf");
   const platformRef = useRef<Mesh | null>(null);
@@ -105,15 +105,15 @@ const Platform: React.FC<PlatformProps> = ({
 
   // Angel Rotation on Clothing Selection
   useEffect(() => {
-    if (triggerRotation && angelsRef.current) {
+    if (triggerAngelRotation && angelsRef.current) {
       gsap.to(angelsRef.current.rotation, {
         y: angelsRef.current.rotation.y - Math.PI * 2, // 360 degrees
         duration: 1.25,
         ease: "power1.inOut", // Adjust this for easing
-        onComplete: onRotationComplete,
+        onComplete: onAngelRotationComplete,
       });
     }
-  }, [triggerRotation, onRotationComplete]);
+  }, [triggerAngelRotation, onAngelRotationComplete]);
 
   // Rotating heavenly angels
   useFrame(() => {

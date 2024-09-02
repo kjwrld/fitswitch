@@ -9,7 +9,7 @@ const CameraControls = () => {
   const cameraConfig = useControls("Camera", {
     positionX: { value: 0, min: -10, max: 10, step: 0.1 },
     positionY: { value: 1.4, min: -5, max: 5, step: 0.1 },
-    positionZ: { value: -2.3, min: -5, max: 5, step: 0.1 },
+    positionZ: { value: -2.1, min: -5, max: 5, step: 0.1 },
     targetX: { value: 0, min: -5, max: 5, step: 0.1 },
     targetY: { value: 1.3, min: 0, max: 3, step: 0.1 },
     targetZ: { value: 0, min: -5, max: 5, step: 0.1 },
@@ -53,7 +53,7 @@ const CameraControls = () => {
       targetPosition.current.y = cameraConfig.positionY + mouseY * -0.25; // Adjust sensitivity
 
       // Adjust Z based on distance from center, farther from center = greater Z value
-      const zOffset = distanceFromCenter * 0.55; // Adjust this multiplier for more or less Z movement
+      const zOffset = distanceFromCenter * 0.75; // Adjust this multiplier for more or less Z movement
       targetPosition.current.z = cameraConfig.positionZ - zOffset;
     };
 

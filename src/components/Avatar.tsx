@@ -98,7 +98,6 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath }) => {
       }
     );
 
-    // Cleanup function to remove avatar from scene when component unmounts or path changes
     return () => {
       if (avatar) {
         scene.remove(avatar.scene);
