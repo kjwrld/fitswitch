@@ -39,22 +39,22 @@ const CameraControls = () => {
     z: cameraConfig.positionZ,
   });
 
-  // perspectiveCamera.position.set(
-  //   cameraConfig.positionX,
-  //   cameraConfig.positionY,
-  //   cameraConfig.positionZ
-  // );
-  // gl.domElement.dispatchEvent(new Event("resize")); // Ensure canvas resizes with camera adjustments
-
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       const { innerWidth, innerHeight } = window;
       const mouseX = (event.clientX / innerWidth) * 2 - 1;
       const mouseY = -(event.clientY / innerHeight) * 2 + 1;
 
+      // Calculate distance from center (0, 0)
+      const distanceFromCenter = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
+
       // Set the target position based on mouse movement
       targetPosition.current.x = cameraConfig.positionX + mouseX * 0.5; // Adjust sensitivity
       targetPosition.current.y = cameraConfig.positionY + mouseY * -0.25; // Adjust sensitivity
+
+      // Adjust Z based on distance from center, farther from center = greater Z value
+      const zOffset = distanceFromCenter * 0.55; // Adjust this multiplier for more or less Z movement
+      targetPosition.current.z = cameraConfig.positionZ - zOffset;
     };
 
     window.addEventListener("mousemove", handleMouseMove);
