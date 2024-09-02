@@ -5,6 +5,7 @@ import Avatar from "./components/Avatar";
 import CameraControls from "./components/CameraControls";
 import Platform from "./components/Platform";
 import "./styles.css";
+import { Vector3 } from "three";
 
 const App: React.FC = () => {
   const [vrmPath, setVrmPath] = useState<string>("/vrms/avatar_black.vrm");
@@ -22,7 +23,7 @@ const App: React.FC = () => {
   return (
     <div id="root">
       <div className="canvas-container">
-        <Canvas camera={{ position: [0, 1.7, -2.2] }}>
+        <Canvas camera={{ position: new Vector3(0, 1.5, -2.3) }}>
           <ambientLight intensity={0.65} />
           <spotLight position={[0, 2, -1]} intensity={0.4} />
           <Suspense>
