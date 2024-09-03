@@ -8,19 +8,25 @@ import { gsap } from "gsap";
 interface PlatformProps {
   triggerAngelRotation: boolean;
   onAngelRotationComplete: () => void;
+  platformCircleRotation: [number, number, number];
+  bind: any;
 }
 
 const Platform: React.FC<PlatformProps> = ({
   triggerAngelRotation,
   onAngelRotationComplete,
+  platformCircleRotation,
+  bind,
 }) => {
   const gltf = useLoader(GLTFLoader, "/platform.gltf");
   const platformRef = useRef<Mesh | null>(null);
+  const platformCircleRef = useRef<Mesh | null>(null);
+  const platformLightsRef = useRef<Mesh | null>(null);
   const heavenRef = useRef<Mesh | null>(null);
   const angelsRef = useRef<Mesh | null>(null);
   const lightRef = useRef<PointLight | null>(null);
   // const lightsRef = useRef<PointLight[]>([]);
-  const emissiveColor = new Color(0x4f67ff); // Set the color of the light
+  const emissiveColor = new Color(0x4f67ff);
 
   const { scale, positionX, positionY, positionZ } = useControls("Platform", {
     scale: { value: 0.15, min: 0.1, max: 0.5, step: 0.01 },
@@ -57,24 +63,13 @@ const Platform: React.FC<PlatformProps> = ({
 
           switch (child.name) {
             case "platform_circle":
+              platformCircleRef.current = child;
               break;
             case "platform_bottom":
-              material.emissive = emissiveColor;
-              material.emissiveIntensity = 5;
-              // material.emissiveMap = material.map; // Optional: Use the texture as an emissive map
-              const light = new PointLight(emissiveColor, 2, 2);
-              lightRef.current = light;
-              gltf.scene.add(light);
-              light.position.copy(child.position);
               break;
             case "heaven_light":
               material.emissive = emissiveColor;
               material.emissiveIntensity = 5;
-              // material.emissiveMap = material.map; // Optional: Use the texture as an emissive map
-              // const light = new PointLight(emissiveColor, 2, 2);
-              // lightRef.current = light;
-              // gltf.scene.add(light);
-              // light.position.copy(child.position);
               break;
             case "platform_":
               platformRef.current = child;
@@ -82,7 +77,7 @@ const Platform: React.FC<PlatformProps> = ({
             case "platform_lights":
               material.emissive = emissiveColor;
               material.emissiveIntensity = 5;
-              // material.emissiveMap = material.map;
+              platformLightsRef.current = child;
               break;
             case "heaven":
               heavenRef.current = child;
@@ -99,7 +94,6 @@ const Platform: React.FC<PlatformProps> = ({
 
       gltf.scene.scale.set(scale, scale, scale);
       gltf.scene.position.set(positionX, positionY, positionZ);
-      // gltf.scene.rotation.set(rotationX, rotationY, rotationZ);
     }
   }, [gltf, scale, positionX, positionY, positionZ]);
 
@@ -107,25 +101,43 @@ const Platform: React.FC<PlatformProps> = ({
   useEffect(() => {
     if (triggerAngelRotation && angelsRef.current) {
       gsap.to(angelsRef.current.rotation, {
-        y: angelsRef.current.rotation.y - Math.PI * 2, // 360 degrees
+        y: angelsRef.current.rotation.y - Math.PI * 2,
         duration: 1.25,
-        ease: "power1.inOut", // Adjust this for easing
+        ease: "power1.inOut",
         onComplete: onAngelRotationComplete,
       });
     }
   }, [triggerAngelRotation, onAngelRotationComplete]);
 
+  // Platform Circle Drag
+  useEffect(() => {
+    if (platformCircleRef.current) {
+      gsap.to(platformCircleRef.current.rotation, {
+        x: platformCircleRotation[0],
+        y: platformCircleRotation[1],
+        duration: 0.5,
+        ease: "power2.out",
+      });
+
+      gsap.to(platformLightsRef.current.rotation, {
+        x: platformCircleRotation[0],
+        y: platformCircleRotation[1],
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    }
+  }, [platformCircleRotation]);
+
   // Rotating heavenly angels
   useFrame(() => {
     if (angelsRef.current) {
-      angelsRef.current.rotation.y += 0.01; // Adjust the speed of rotation as needed
+      angelsRef.current.rotation.y += 0.01;
     }
   });
 
   // Light Positioning
   useFrame(() => {
     if (lightRef.current) {
-      // Update the light's properties based on the Leva controls
       lightRef.current.intensity = lightIntensity;
       lightRef.current.color.set(lightColor);
       lightRef.current.distance = lightDistance;
@@ -150,10 +162,9 @@ const Platform: React.FC<PlatformProps> = ({
   // });
 
   return (
-    <>
-      <primitive object={gltf.scene} />;
-      <pointLight ref={lightRef} />
-    </>
+    <mesh ref={platformCircleRef} {...bind()}>
+      <primitive object={gltf.scene} />
+    </mesh>
   );
 };
 

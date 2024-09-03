@@ -39,6 +39,7 @@ const CameraControls = () => {
     z: cameraConfig.positionZ,
   });
 
+  // Camera Offset
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       const { innerWidth, innerHeight } = window;
@@ -53,7 +54,7 @@ const CameraControls = () => {
       targetPosition.current.y = cameraConfig.positionY + mouseY * -0.25; // Adjust sensitivity
 
       // Adjust Z based on distance from center, farther from center = greater Z value
-      const zOffset = distanceFromCenter * 0.75; // Adjust this multiplier for more or less Z movement
+      const zOffset = distanceFromCenter * 0.65; // Adjust this multiplier for more or less Z movement
       targetPosition.current.z = cameraConfig.positionZ - zOffset;
     };
 
@@ -62,7 +63,6 @@ const CameraControls = () => {
   }, [cameraConfig]);
 
   useFrame(() => {
-    // Lerp the camera position
     lerpedPosition.current.x +=
       (targetPosition.current.x - lerpedPosition.current.x) * 0.1;
     lerpedPosition.current.y +=
