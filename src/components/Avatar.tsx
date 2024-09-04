@@ -57,8 +57,6 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath, avatarRotation }) => {
         }
         setAvatar(vrm);
         scene.add(vrm.scene);
-        vrm.scene.rotation.y = Math.PI * 1.5;
-        console.log(vrm.scene.rotation.y);
 
         // Disable frustum culling
         vrm.scene.traverse((obj) => {
