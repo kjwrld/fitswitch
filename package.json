@@ -9,6 +9,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "^5.0.1",
+    "three-stdlib": "^2.32.2",
     "typescript": "^5.5.4"
   },
   "scripts": {
@@ -27,9 +28,11 @@
   "author": "kaidge <kj@dfrnt.world>",
   "license": "MIT",
   "devDependencies": {
+    "@funtech-inc/use-shader-fx": "^1.1.43",
     "@pixiv/three-vrm": "^3.1.0",
     "@react-three/drei": "^9.111.5",
     "@react-three/fiber": "^8.17.6",
+    "@react-three/postprocessing": "^2.16.2",
     "@types/react-dom": "^18.3.0",
     "@use-gesture/react": "^10.3.1",
     "leva": "^0.9.35",

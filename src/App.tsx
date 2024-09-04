@@ -9,19 +9,55 @@ import { Vector3 } from "three";
 import { useDrag } from "@use-gesture/react";
 import { Leva } from "leva";
 
+interface SceneProps {
+  vrmPath: string;
+  triggerAngelRotation: boolean;
+  handleAngelRotationComplete: () => void;
+  platformCircleRotation: [number, number, number];
+  avatarRotation: [number, number, number];
+  bind: any;
+}
+
+const Scene: React.FC<SceneProps> = ({
+  vrmPath,
+  triggerAngelRotation,
+  handleAngelRotationComplete,
+  platformCircleRotation,
+  avatarRotation,
+  bind,
+}) => {
+  return (
+    <>
+      <ambientLight intensity={0.65} />
+      <spotLight position={[0, 2, -1]} intensity={0.4} />
+      <Suspense>
+        <Platform
+          triggerAngelRotation={triggerAngelRotation}
+          onAngelRotationComplete={handleAngelRotationComplete}
+          platformCircleRotation={platformCircleRotation}
+          bind={bind}
+        />
+        <Avatar vrmPath={vrmPath} avatarRotation={avatarRotation} />
+        <CameraControls />
+      </Suspense>
+      <OrbitControls target={[0, 1.3, 0]} />
+    </>
+  );
+};
+
 const App: React.FC = () => {
   const [vrmPath, setVrmPath] = useState<string>("/vrms/avatar_black.vrm");
   const [triggerAngelRotation, setTriggerAngelRotation] = useState(false);
   const [avatarRotation, setAvatarRotation] = useState<
     [number, number, number]
-  >([0, 0, 0]);
+  >([0, Math.PI, 0]);
   const [platformCircleRotation, setPlatformCircleRotation] = useState<
     [number, number, number]
-  >([0, 0, 0]);
+  >([0, Math.PI, 0]);
 
   const bind = useDrag(
     ({ offset: [x, y] }) => {
-      const newRotation = [y * 0.005, x * 0.005, 0] as [number, number, number];
+      const newRotation = [y * 0.01, x * 0.01, 0] as [number, number, number];
       setPlatformCircleRotation(newRotation);
       setAvatarRotation(newRotation);
     },
@@ -41,21 +77,16 @@ const App: React.FC = () => {
     <>
       <Leva collapsed />
       <div id="root">
-        <div className="canvas-container">
+        <div {...bind()} className="canvas-container">
           <Canvas camera={{ position: new Vector3(0, 1.5, -2.3) }}>
-            <ambientLight intensity={0.65} />
-            <spotLight position={[0, 2, -1]} intensity={0.4} />
-            <Suspense>
-              <Platform
-                triggerAngelRotation={triggerAngelRotation}
-                onAngelRotationComplete={handleAngelRotationComplete}
-                platformCircleRotation={platformCircleRotation}
-                bind={bind}
-              />
-              <Avatar vrmPath={vrmPath} avatarRotation={avatarRotation} />
-              <CameraControls />
-            </Suspense>
-            <OrbitControls target={[0, 1.3, 0]} />
+            <Scene
+              vrmPath={vrmPath}
+              triggerAngelRotation={triggerAngelRotation}
+              handleAngelRotationComplete={handleAngelRotationComplete}
+              platformCircleRotation={platformCircleRotation}
+              avatarRotation={avatarRotation}
+              bind={bind}
+            />
           </Canvas>
         </div>
 

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { VRM, VRMLoaderPlugin, VRMHumanBoneName } from "@pixiv/three-vrm";
 import gsap from "gsap";
-import { Object3D } from "three";
+import { Object3D, AnimationMixer } from "three";
 import { useControls } from "leva";
+import { loadMixamoAnimation } from "./loadMixamoAnimation";
 
 interface AvatarProps {
   vrmPath: string;
@@ -32,7 +34,9 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath, avatarRotation }) => {
   const [gltf, setGltf] = useState<GLTF>();
   const [progress, setProgress] = useState<number>(0);
   const [avatar, setAvatar] = useState<VRM | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
   const [bonesStore, setBones] = useState<{ [part: string]: Object3D }>({});
+  const mixerRef = useRef<AnimationMixer | null>(null);
 
   useEffect(() => {
     const loader = new GLTFLoader();
@@ -45,11 +49,33 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath, avatarRotation }) => {
       (gltf) => {
         setGltf(gltf);
         const vrm: VRM = gltf.userData.vrm;
+        // Hide the avatar initially
+        vrm.scene.visible = false;
+
         if (avatar) {
           scene.remove(avatar.scene);
         }
         setAvatar(vrm);
         scene.add(vrm.scene);
+        vrm.scene.rotation.y = Math.PI * 1.5;
+        console.log(vrm.scene.rotation.y);
+
+        // Disable frustum culling
+        vrm.scene.traverse((obj) => {
+          obj.frustumCulled = false;
+        });
+
+        // Load and apply the Mixamo animation
+        if (mixerRef.current) mixerRef.current.stopAllAction();
+        mixerRef.current = new AnimationMixer(vrm.scene);
+
+        loadMixamoAnimation("./animations/Catwalk_Idle_01.fbx", vrm).then(
+          (clip: THREE.AnimationClip) => {
+            mixerRef.current?.clipAction(clip).play();
+            vrm.scene.visible = true;
+            setIsVisible(true);
+          }
+        );
 
         vrm.humanoid.getNormalizedBoneNode(VRMHumanBoneName.Hips).rotation.y =
           Math.PI;
@@ -75,7 +101,6 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath, avatarRotation }) => {
 
       (xhr) => {
         setProgress((xhr.loaded / xhr.total) * 100);
-        console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
       },
       (error) => {
         console.log("An error happened");
@@ -86,7 +111,6 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath, avatarRotation }) => {
     return () => {
       if (avatar) {
         scene.remove(avatar.scene);
-        console.log("avatar unmounted");
       }
     };
   }, [vrmPath, scene]);
@@ -104,8 +128,9 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath, avatarRotation }) => {
 
   useFrame(({ clock }, delta) => {
     const t = clock.getElapsedTime();
+    if (mixerRef.current) mixerRef.current.update(delta);
 
-    if (avatar) {
+    if (avatar && isVisible) {
       {
         avatar.scene.position.x = controls.positionX;
         avatar.scene.position.y = controls.positionY;
@@ -156,7 +181,7 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath, avatarRotation }) => {
   });
   return (
     <>
-      {avatar ? (
+      {avatar && isVisible ? (
         <>
           <primitive object={avatar.scene} />
         </>
