@@ -105,7 +105,8 @@ const CameraControls = () => {
           gsap.to(lerpedPosition.current, {
             x: originalPosition.current.x,
             y: originalPosition.current.y,
-            z: originalPosition.current.z,
+            // z: originalPosition.current.z,
+            z: -3,
             duration: 1.5, // Adjust duration for smoother ease
             ease: "power3.out",
             onUpdate: () => {

@@ -1,0 +1,56 @@
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* background-color: rgba(0, 0, 0, 0.7); */
+  padding: 10px;
+  border-radius: 8px;
+  position: relative;
+  font-family: "Orbitron", sans-serif;
+  color: #3498db;
+}
+
+.loader-container span {
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.loader {
+  display: flex;
+  justify-content: space-between;
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+.loading-bar {
+  width: 20px;
+  height: 10px;
+  background-color: #3498db;
+  /* background-color: black; */
+  animation: loading-bar-animation 1.5s infinite ease-in-out;
+  box-shadow: 0 0 15px rgba(52, 152, 219, 0.6);
+  /* box-shadow: 0 0 20px black; */
+}
+
+.loading-bar1 {
+  animation-delay: 0s;
+}
+
+.loading-bar2 {
+  animation-delay: 0.3s;
+}
+
+.loading-bar3 {
+  animation-delay: 0.6s;
+}
+
+@keyframes loading-bar-animation {
+  0%,
+  100% {
+    transform: scaleX(0);
+  }
+  50% {
+    transform: scaleX(1);
+  }
+}

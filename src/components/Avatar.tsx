@@ -8,6 +8,7 @@ import gsap from "gsap";
 import { Object3D, AnimationMixer } from "three";
 import { useControls } from "leva";
 import { loadMixamoAnimation } from "./loadMixamoAnimation";
+import "./Avatar.css";
 
 interface AvatarProps {
   vrmPath: string;
@@ -184,7 +185,18 @@ const Avatar: React.FC<AvatarProps> = ({ vrmPath, avatarRotation }) => {
           <primitive object={avatar.scene} />
         </>
       ) : (
-        <Html center>{progress} % loaded</Html>
+        <Html center style={{ transform: "translate(-30px, -50vh)" }}>
+          {/* Move it higher */}
+          <div className="loader-container">
+            <div className="loader">
+              <div className="loading-bar loading-bar1"></div>
+              <div className="loading-bar loading-bar2"></div>
+              <div className="loading-bar loading-bar3"></div>
+            </div>
+            <span>{progress.toFixed(0)} % loaded</span>{" "}
+            {/* Display progress percentage */}
+          </div>
+        </Html>
       )}
     </>
   );
