@@ -2,7 +2,7 @@
 
 A 3D web experience where users can explore clothing on a VRM avatar. The platform allows for interactive outfit changes and platform rotation, creating an engaging shopping experience. This project aims to revolutionize how designers present their clothing ideas, allowing them to see dynamic, realistic garments on avatars with real-time effects, physics, and animations.
 
-![Project Demo](./assets/project-demo-placeholder.png)
+![quicklook](https://github.com/user-attachments/assets/44cfbfdb-1e76-4b1a-85c5-98438c6d1578)
 
 ## 🚀 Project Vision
 
