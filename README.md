@@ -46,8 +46,6 @@ Here’s a list of the primary technologies and libraries used in this project:
 
 ## Key Technologies
 
-# Thank you to Pixiv/Three-VRM for making the speed of this project possible.
-
 React: Provides the structure for the user interface and interaction.
 React Three Fiber: A React-based renderer for Three.js, making it easy to work with 3D models and environments in a declarative way.
 Three.js: The core 3D library that powers the scene, camera, and objects.
