@@ -13,6 +13,7 @@ export function loadMixamoAnimation(url, vrm) {
     const parentRestWorldRotation = new THREE.Quaternion();
     const _quatA = new THREE.Quaternion();
     const _vec3 = new THREE.Vector3();
+    // console.log(vrm.humanoid);
 
     const motionHipsHeight = asset.getObjectByName("mixamorigHips").position.y;
     const vrmHipsY = vrm.humanoid
