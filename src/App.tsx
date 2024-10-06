@@ -4,6 +4,7 @@ import { OrbitControls } from "@react-three/drei";
 import Avatar from "./components/Avatar";
 import CameraControls from "./components/CameraControls";
 import Platform from "./components/Platform";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import "./styles.css";
 import { Vector3 } from "three";
 import { useDrag } from "@use-gesture/react";
@@ -87,6 +88,14 @@ const App: React.FC = () => {
               avatarRotation={avatarRotation}
               bind={bind}
             />
+            <EffectComposer>
+              <Bloom
+                mipmapBlur
+                luminanceThreshold={1}
+                intensity={1.42}
+                radius={0.72}
+              />
+            </EffectComposer>
           </Canvas>
         </div>
 

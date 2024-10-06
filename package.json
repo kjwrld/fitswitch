@@ -5,6 +5,7 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
+    "@gltf-transform/extensions": "^4.0.10",
     "gsap": "^3.12.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -30,9 +31,9 @@
   "devDependencies": {
     "@funtech-inc/use-shader-fx": "^1.1.43",
     "@pixiv/three-vrm": "^3.1.0",
-    "@react-three/drei": "^9.111.5",
+    "@react-three/drei": "^9.114.0",
     "@react-three/fiber": "^8.17.6",
-    "@react-three/postprocessing": "^2.16.2",
+    "@react-three/postprocessing": "^2.16.3",
     "@types/react-dom": "^18.3.0",
     "@use-gesture/react": "^10.3.1",
     "leva": "^0.9.35",
