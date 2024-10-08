@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/static/css/main.d52e9169.css",
-    "main.js": "/static/js/main.fa8bdcaf.js",
-    "index.html": "/index.html",
-    "main.d52e9169.css.map": "/static/css/main.d52e9169.css.map",
-    "main.fa8bdcaf.js.map": "/static/js/main.fa8bdcaf.js.map"
+    "main.css": "/fitswitch/static/css/main.d52e9169.css",
+    "main.js": "/fitswitch/static/js/main.e250c549.js",
+    "index.html": "/fitswitch/index.html",
+    "main.d52e9169.css.map": "/fitswitch/static/css/main.d52e9169.css.map",
+    "main.e250c549.js.map": "/fitswitch/static/js/main.e250c549.js.map"
   },
   "entrypoints": [
     "static/css/main.d52e9169.css",
-    "static/js/main.fa8bdcaf.js"
+    "static/js/main.e250c549.js"
   ]
 }
