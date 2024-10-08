@@ -32,6 +32,7 @@
   "author": "kaidge <kj@dfrnt.world>",
   "license": "MIT",
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@funtech-inc/use-shader-fx": "^1.1.43",
     "@pixiv/three-vrm": "^3.1.0",
     "@react-three/drei": "^9.114.0",
