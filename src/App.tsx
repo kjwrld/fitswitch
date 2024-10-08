@@ -47,7 +47,11 @@ const Scene: React.FC<SceneProps> = ({
 };
 
 const App: React.FC = () => {
-  const [vrmPath, setVrmPath] = useState<string>("/vrms/avatar_black.vrm");
+  const baseUrl =
+    process.env.NODE_ENV === "production" ? process.env.PUBLIC_URL : "";
+  const [vrmPath, setVrmPath] = useState<string>(
+    `${baseUrl}/vrms/avatar_black.vrm`
+  );
   const [triggerAngelRotation, setTriggerAngelRotation] = useState(false);
   const [avatarRotation, setAvatarRotation] = useState<
     [number, number, number]
@@ -67,7 +71,7 @@ const App: React.FC = () => {
 
   const changeOutfit = (newPath: string) => {
     setTriggerAngelRotation(true);
-    setVrmPath(newPath);
+    setVrmPath(`${baseUrl}${newPath}`);
   };
 
   const handleAngelRotationComplete = () => {

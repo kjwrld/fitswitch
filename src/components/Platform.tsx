@@ -19,7 +19,10 @@ const Platform: React.FC<PlatformProps> = ({
   platformCircleRotation,
   bind,
 }) => {
-  const gltf = useLoader(GLTFLoader, "/platform.gltf");
+  const baseUrl =
+    process.env.NODE_ENV === "production" ? process.env.PUBLIC_URL : "";
+
+  const gltf = useLoader(GLTFLoader, `${baseUrl}/platform.gltf`);
   const platformRef = useRef<Mesh | null>(null);
   const platformCircleRef = useRef<Mesh | null>(null);
   const platformLightsRef = useRef<Mesh | null>(null);
