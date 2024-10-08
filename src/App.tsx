@@ -10,6 +10,14 @@ import { Vector3 } from "three";
 import { useDrag } from "@use-gesture/react";
 import { Leva } from "leva";
 
+const debounce = (func: Function, wait: number) => {
+  let timeout: NodeJS.Timeout;
+  return (...args: any) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
+
 interface SceneProps {
   vrmPath: string;
   triggerAngelRotation: boolean;
@@ -59,6 +67,7 @@ const App: React.FC = () => {
   const [platformCircleRotation, setPlatformCircleRotation] = useState<
     [number, number, number]
   >([0, Math.PI, 0]);
+  const [loadingGLTF, setLoadingGLTF] = useState(false);
 
   const bind = useDrag(
     ({ offset: [x, y] }) => {
@@ -69,13 +78,17 @@ const App: React.FC = () => {
     { axis: "x" }
   );
 
-  const changeOutfit = (newPath: string) => {
-    setTriggerAngelRotation(true);
-    setVrmPath(`${baseUrl}${newPath}`);
-  };
+  const changeOutfit = debounce((newPath: string) => {
+    if (!loadingGLTF) {
+      setLoadingGLTF(true);
+      setTriggerAngelRotation(true);
+      setVrmPath(`${baseUrl}${newPath}`);
+    }
+  }, 500);
 
   const handleAngelRotationComplete = () => {
     setTriggerAngelRotation(false);
+    setLoadingGLTF(false);
   };
 
   return (
@@ -104,16 +117,28 @@ const App: React.FC = () => {
         </div>
 
         <div className="button-container">
-          <button onClick={() => changeOutfit("/vrms/avatar_black.vrm")}>
+          <button
+            onClick={() => changeOutfit("/vrms/avatar_black.vrm")}
+            disabled={loadingGLTF}
+          >
             Black Outfit
           </button>
-          <button onClick={() => changeOutfit("/vrms/avatar_casual.vrm")}>
+          <button
+            onClick={() => changeOutfit("/vrms/avatar_casual.vrm")}
+            disabled={loadingGLTF}
+          >
             Casual Outfit
           </button>
-          <button onClick={() => changeOutfit("/vrms/avatar_formal.vrm")}>
+          <button
+            onClick={() => changeOutfit("/vrms/avatar_formal.vrm")}
+            disabled={loadingGLTF}
+          >
             Formal Outfit
           </button>
-          <button onClick={() => changeOutfit("/vrms/avatar_sporty.vrm")}>
+          <button
+            onClick={() => changeOutfit("/vrms/avatar_sporty.vrm")}
+            disabled={loadingGLTF}
+          >
             Sporty Outfit
           </button>
         </div>
