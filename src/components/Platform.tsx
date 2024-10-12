@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLoader, useFrame } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { useControls } from "leva";
+import { useControls, folder } from "leva";
 import { Mesh, MeshStandardMaterial, Color, PointLight, Group } from "three";
 import { Environment, Lightformer } from "@react-three/drei";
 import { gsap } from "gsap";
@@ -29,11 +29,16 @@ const Platform: React.FC<PlatformProps> = ({
   const heavenRef = useRef<Mesh | null>(null);
   const angelsRef = useRef<Mesh | null>(null);
 
-  const { scale, positionX, positionY, positionZ } = useControls("Platform", {
-    scale: { value: 0.15, min: 0.1, max: 0.5, step: 0.01 },
-    positionX: { value: 0, min: -10, max: 10, step: 0.1 },
-    positionY: { value: 0.5, min: -10, max: 10, step: 0.1 },
-    positionZ: { value: -0.5, min: -10, max: 10, step: 0.1 },
+  const { scale, positionX, positionY, positionZ } = useControls({
+    Platform: folder(
+      {
+        scale: { value: 0.15, min: 0.1, max: 0.5, step: 0.01 },
+        positionX: { value: 0, min: -10, max: 10, step: 0.1 },
+        positionY: { value: 0.5, min: -10, max: 10, step: 0.1 },
+        positionZ: { value: -0.5, min: -10, max: 10, step: 0.1 },
+      },
+      { collapsed: true }
+    ),
   });
 
   useEffect(() => {

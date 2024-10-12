@@ -12,7 +12,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "^5.0.1",
-    "three-stdlib": "^2.32.2",
+    "three-stdlib": "^2.33.0",
     "typescript": "^5.5.4"
   },
   "scripts": {
@@ -42,6 +42,6 @@
     "@use-gesture/react": "^10.3.1",
     "gh-pages": "^6.1.1",
     "leva": "^0.9.35",
-    "three": "^0.168.0"
+    "three": "^0.169.0"
   }
 }

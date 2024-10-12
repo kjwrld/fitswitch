@@ -4,11 +4,11 @@ import { OrbitControls } from "@react-three/drei";
 import Avatar from "./components/Avatar";
 import CameraControls from "./components/CameraControls";
 import Platform from "./components/Platform";
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import PostProcessing from "./components/PostProcessing";
 import "./styles.css";
 import { Vector3 } from "three";
 import { useDrag } from "@use-gesture/react";
-import { Leva } from "leva";
+import { Leva, useControls } from "leva";
 
 const debounce = (func: Function, wait: number) => {
   let timeout: NodeJS.Timeout;
@@ -18,7 +18,7 @@ const debounce = (func: Function, wait: number) => {
   };
 };
 
-interface SceneProps {
+interface CanvasSceneProps {
   vrmPath: string;
   triggerAngelRotation: boolean;
   handleAngelRotationComplete: () => void;
@@ -27,7 +27,7 @@ interface SceneProps {
   bind: any;
 }
 
-const Scene: React.FC<SceneProps> = ({
+const CanvasScene: React.FC<CanvasSceneProps> = ({
   vrmPath,
   triggerAngelRotation,
   handleAngelRotationComplete,
@@ -55,6 +55,12 @@ const Scene: React.FC<SceneProps> = ({
 };
 
 const App: React.FC = () => {
+  const { normalEdgeStrength, depthEdgeStrength, pixelSize } = useControls({
+    normalEdgeStrength: { value: 1, min: 0, max: 2, step: 0.5 },
+    depthEdgeStrength: { value: 0.5, min: 0, max: 1, step: 0.1 },
+    pixelSize: { value: 8, min: 1, max: 16, step: 1 },
+  });
+
   const baseUrl =
     process.env.NODE_ENV === "production" ? process.env.PUBLIC_URL : "";
   const [vrmPath, setVrmPath] = useState<string>(
@@ -83,12 +89,12 @@ const App: React.FC = () => {
       setLoadingGLTF(true);
       setTriggerAngelRotation(true);
       setVrmPath(`${baseUrl}${newPath}`);
+      setLoadingGLTF(false);
     }
-  }, 500);
+  }, 1000);
 
   const handleAngelRotationComplete = () => {
     setTriggerAngelRotation(false);
-    setLoadingGLTF(false);
   };
 
   return (
@@ -97,7 +103,7 @@ const App: React.FC = () => {
       <div id="root">
         <div {...bind()} className="canvas-container">
           <Canvas camera={{ position: new Vector3(0, 1.5, -2.3) }}>
-            <Scene
+            <CanvasScene
               vrmPath={vrmPath}
               triggerAngelRotation={triggerAngelRotation}
               handleAngelRotationComplete={handleAngelRotationComplete}
@@ -105,14 +111,7 @@ const App: React.FC = () => {
               avatarRotation={avatarRotation}
               bind={bind}
             />
-            <EffectComposer>
-              <Bloom
-                mipmapBlur
-                luminanceThreshold={1}
-                intensity={1.42}
-                radius={0.72}
-              />
-            </EffectComposer>
+            <PostProcessing />
           </Canvas>
         </div>
 

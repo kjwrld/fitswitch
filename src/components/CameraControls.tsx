@@ -3,7 +3,7 @@ import { useThree, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { OrthographicCamera, PerspectiveCamera } from "three";
 import gsap from "gsap";
-import { button, useControls } from "leva";
+import { useControls, button, folder } from "leva";
 
 const CameraControls = () => {
   const { camera, gl, invalidate } = useThree();
@@ -14,20 +14,35 @@ const CameraControls = () => {
   const isOffScreen = useRef(false); // Tracks if the mouse is offscreen
   const hasTransitionedOffScreen = useRef(false); // Tracks if the camera has already transitioned
 
-  const cameraConfig = useControls("Camera", {
-    positionX: { value: 0, min: -10, max: 10, step: 0.1 },
-    positionY: { value: 1.4, min: -5, max: 5, step: 0.1 },
-    positionZ: { value: -2.0, min: -5, max: 5, step: 0.1 },
-    targetX: { value: 0, min: -5, max: 5, step: 0.1 },
-    targetY: { value: 1.3, min: 0, max: 3, step: 0.1 },
-    targetZ: { value: 0, min: -5, max: 5, step: 0.1 },
-    near: { value: 0.1, min: 0.1, max: 10, step: 0.1 },
-    far: { value: 1000, min: 100, max: 2000, step: 10 },
-    resetCamera: button(() => {
-      camera.position.set(0, 1.5, -2.3);
-      camera.rotation.y = -Math.PI;
-      gl.domElement.dispatchEvent(new Event("resize"));
-    }),
+  const cameraConfig = useControls({
+    "Camera Position": folder(
+      {
+        positionX: { value: 0, min: -10, max: 10, step: 0.1 },
+        positionY: { value: 1.4, min: -5, max: 5, step: 0.1 },
+        positionZ: { value: -2.0, min: -5, max: 5, step: 0.1 },
+      },
+      { collapsed: true } // Start collapsed
+    ),
+    "Camera Target": folder(
+      {
+        targetX: { value: 0, min: -5, max: 5, step: 0.1 },
+        targetY: { value: 1.3, min: 0, max: 3, step: 0.1 },
+        targetZ: { value: 0, min: -5, max: 5, step: 0.1 },
+      },
+      { collapsed: true } // Start collapsed
+    ),
+    "Camera Settings": folder(
+      {
+        near: { value: 0.1, min: 0.1, max: 10, step: 0.1 },
+        far: { value: 1000, min: 100, max: 2000, step: 10 },
+        resetCamera: button(() => {
+          camera.position.set(0, 1.5, -2.3);
+          camera.rotation.y = -Math.PI;
+          gl.domElement.dispatchEvent(new Event("resize"));
+        }),
+      },
+      { collapsed: true } // Start collapsed
+    ),
   });
 
   const perspectiveCamera = camera as OrthographicCamera;

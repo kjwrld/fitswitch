@@ -6,7 +6,7 @@ import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { VRM, VRMLoaderPlugin, VRMHumanBoneName } from "@pixiv/three-vrm";
 import gsap from "gsap";
 import { Object3D, AnimationMixer } from "three";
-import { useControls } from "leva";
+import { useControls, folder } from "leva";
 import { loadMixamoAnimation } from "./loadMixamoAnimation";
 import "./Avatar.css";
 
@@ -16,20 +16,37 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ vrmPath, avatarRotation }) => {
-  const { ...controls } = useControls("Avatar", {
-    Head: { value: 0, min: -0.4, max: 0.4 },
-    leftArm: { value: 0, min: -0.4, max: 0.4 },
-    rightArm: { value: 0, min: -0.4, max: 0.4 },
-    Neutral: { value: 0, min: 0, max: 1 },
-    Angry: { value: 0, min: 0, max: 1 },
-    Relaxed: { value: 0, min: 0, max: 1 },
-    Happy: { value: 0, min: 0, max: 1 },
-    Sad: { value: 0, min: 0, max: 1 },
-    Surprised: { value: 0, min: 0, max: 1 },
-    Extra: { value: 0, min: 0, max: 1 },
-    positionX: { value: 0.0, min: -5, max: 5, step: 0.1 },
-    positionY: { value: 0.5, min: -5, max: 5, step: 0.1 },
-    positionZ: { value: -0.4, min: -5, max: 5, step: 0.1 },
+  const { ...controls } = useControls({
+    "Avatar Position": folder(
+      {
+        positionX: { value: 0.0, min: -5, max: 5, step: 0.1 },
+        positionY: { value: 0.5, min: -5, max: 5, step: 0.1 },
+        positionZ: { value: -0.4, min: -5, max: 5, step: 0.1 },
+      },
+      { collapsed: true }
+    ), // Folder starts closed
+
+    "Avatar Emotions": folder(
+      {
+        Neutral: { value: 0, min: 0, max: 1 },
+        Angry: { value: 0, min: 0, max: 1 },
+        Relaxed: { value: 0, min: 0, max: 1 },
+        Happy: { value: 0, min: 0, max: 1 },
+        Sad: { value: 0, min: 0, max: 1 },
+        Surprised: { value: 0, min: 0, max: 1 },
+        Extra: { value: 0, min: 0, max: 1 },
+      },
+      { collapsed: true }
+    ), // Folder starts closed
+
+    "Avatar Limbs": folder(
+      {
+        Head: { value: 0, min: -0.4, max: 0.4 },
+        leftArm: { value: 0, min: -0.4, max: 0.4 },
+        rightArm: { value: 0, min: -0.4, max: 0.4 },
+      },
+      { collapsed: true }
+    ), // Folder starts closed
   });
   const { scene } = useThree();
   const [gltf, setGltf] = useState<GLTF>();
