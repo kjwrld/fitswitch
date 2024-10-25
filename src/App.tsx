@@ -55,12 +55,6 @@ const CanvasScene: React.FC<CanvasSceneProps> = ({
 };
 
 const App: React.FC = () => {
-  const { normalEdgeStrength, depthEdgeStrength, pixelSize } = useControls({
-    normalEdgeStrength: { value: 1, min: 0, max: 2, step: 0.5 },
-    depthEdgeStrength: { value: 0.5, min: 0, max: 1, step: 0.1 },
-    pixelSize: { value: 8, min: 1, max: 16, step: 1 },
-  });
-
   const baseUrl =
     process.env.NODE_ENV === "production" ? process.env.PUBLIC_URL : "";
   const [vrmPath, setVrmPath] = useState<string>(
@@ -87,9 +81,9 @@ const App: React.FC = () => {
   const changeOutfit = debounce((newPath: string) => {
     if (!loadingGLTF) {
       setLoadingGLTF(true);
-      setTriggerAngelRotation(true);
       setVrmPath(`${baseUrl}${newPath}`);
       setLoadingGLTF(false);
+      setTriggerAngelRotation(true);
     }
   }, 1000);
 
@@ -115,7 +109,7 @@ const App: React.FC = () => {
               <Bloom
                 mipmapBlur
                 luminanceThreshold={1}
-                intensity={1.42}
+                intensity={0.42}
                 radius={0.72}
               />
             </EffectComposer>

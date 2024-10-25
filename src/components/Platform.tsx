@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useLoader, useFrame } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useControls, folder } from "leva";
-import { Mesh, MeshStandardMaterial, Color, PointLight, Group } from "three";
+import { Mesh, MeshStandardMaterial } from "three";
 import { Environment, Lightformer } from "@react-three/drei";
 import { gsap } from "gsap";
 
@@ -127,20 +127,13 @@ const Platform: React.FC<PlatformProps> = ({
           preset="studio"
           environmentIntensity={0.02}
         >
-          <Lightformer
+          {/* <Lightformer
             intensity={2}
             rotation={[(3 * Math.PI) / 4, 0, 0]}
             position={[0, 2, 10]}
             scale={[10, 1, 1]}
-          />
+          /> */}
         </Environment>
-
-        {/* <Lightformer
-          intensity={2}
-          rotation={[Math.PI / 2, 0, 0]}
-          position={[0, 10, 10]}
-          scale={[10, 1, 1]}
-        /> */}
 
         <hemisphereLight intensity={0.5} />
         <mesh ref={platformCircleRef} {...bind()}>
